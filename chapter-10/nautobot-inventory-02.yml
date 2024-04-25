@@ -1,0 +1,10 @@
+---
+plugin: networktocode.nautobot.gql_inventory
+query:
+  devices:
+    name:
+    location:
+      name:
+group_by:
+  - location.name
+  - platform.napalm_driver

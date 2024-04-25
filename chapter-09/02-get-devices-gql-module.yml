@@ -1,0 +1,30 @@
+---
+- name: " GET DEVICES"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    - name: "CREATE QUERY STRING"
+      ansible.builtin.set_fact:
+        graph_variables:
+          nautobot_location: AMS01
+        query_string: |
+          query ($nautobot_location: [String]){
+            devices(location: $nautobot_location) {
+              name
+              location {
+                name
+              }
+            }
+          }
+
+    - name: "RETRIEVE DEVICES"
+      networktocode.nautobot.query_graphql:
+        query: "{{ query_string }}"
+        graph_variables: "{{ graph_variables }}"
+      register: devices
+
+    - name: "PRINT DEVICES"
+      ansible.builtin.debug:
+        var: devices

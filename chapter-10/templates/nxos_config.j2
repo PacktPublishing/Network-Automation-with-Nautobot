@@ -1,0 +1,34 @@
+ip access-list PERMIT_ROUTES
+  10 permit ip any any 
+
+route-map PERMIT_CONN_ROUTES permit 10
+  match ip address PERMIT_ROUTES 
+vrf context management
+
+{% set ip_interfaces = interfaces | rejectattr('name', 'equalto', 'mgmt0') | selectattr('ip_addresses', 'ne', []) | list  %}
+{% for interface in ip_interfaces %}
+interface {{ interface['name'] }}
+{% if interface.get('name') != "loopback0" %}
+  no switchport
+{% endif %}
+{% if interface.get('mac_address') %}
+  mac-address {{ interface['mac_address'] | ansible.utils.macaddr('cisco') }}
+{% endif %}
+  ip address {{ interface['ip_addresses'][0]['address'] }}
+  no shutdown
+
+{% endfor %}
+
+{% set bgp_config = config_context['bgp_config'] %}
+router bgp {{ bgp_config['as_number'] }}
+  router-id {{ bgp_config.bgp.router_id.address }}
+  {% if bgp_config.bgp.get('log_neighbor_changes') %}
+  log-neighbor-changes
+  {% endif %}
+  address-family ipv4 unicast
+      redistribute direct route-map PERMIT_CONN_ROUTES
+{% for neighbor in bgp_config['neighbor'] %}
+  neighbor {{ neighbor['address'] }}
+    remote-as {{ neighbor['remote_as'] }}
+    address-family ipv4 unicast
+{% endfor %}

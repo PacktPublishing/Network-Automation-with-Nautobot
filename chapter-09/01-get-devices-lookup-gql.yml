@@ -1,0 +1,26 @@
+---
+- name: " GET DEVICES"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    - name: "CREATE QUERY STRING"
+      ansible.builtin.set_fact:
+        query_string: |
+          query {
+            devices {
+              id
+              name
+            }
+          }
+
+    - name: "RETRIEVE DEVICES"
+      networktocode.nautobot.query_graphql:
+        query: "{{ query_string }}"
+      register: nautobot_devices
+
+    - name: "LOOP OVER DEVICES AND DEBUG NAME OF EACH DEVICE"
+      ansible.builtin.debug:
+        msg: "The name of the device is {{ item.name }}."
+      loop: "{{ nautobot_devices.data.devices }}"

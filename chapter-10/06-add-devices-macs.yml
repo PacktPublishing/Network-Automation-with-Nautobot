@@ -1,0 +1,54 @@
+---
+- name: "ADD DEVICE MAC ADDRS"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    nautobot_url: "{{ lookup('env', 'NAUTOBOT_URL') }}"
+    nautobot_token: "{{ lookup('env', 'NAUTOBOT_TOKEN') }}"
+
+  tasks:
+
+    - name: "ADD NXOS MACS FOR 9KV"
+      networktocode.nautobot.device_interface:
+        url: "{{ nautobot_url }}"
+        token: "{{ nautobot_token }}"
+        device: "{{ device['device'] }}"
+        name: "{{ device['name'] }}"
+        mac_address: "{{ device['mac_address'] }}"
+        state: present
+      loop_control:
+        loop_var: device
+      loop:
+        - device: "jcy-spine-01.infra.ntc.com"
+          name: "Ethernet1/1"
+          mac_address: "0000.1100.2222"
+        - device: "jcy-spine-01.infra.ntc.com"
+          name: "Ethernet1/2"
+          mac_address: "0011.1111.2222"
+        - device: "jcy-spine-01.infra.ntc.com"
+          name: "Ethernet1/3"
+          mac_address: "0022.1122.2222"
+        - device: "jcy-spine-01.infra.ntc.com"
+          name: "Ethernet1/4"
+          mac_address: "0033.1133.2222"
+        - device: "jcy-spine-01.infra.ntc.com"
+          name: "Ethernet1/5"
+          mac_address: "0044.1144.2222"
+
+        - device: "jcy-spine-02.infra.ntc.com"
+          name: "Ethernet1/1"
+          mac_address: "4444.a800.0101"
+        - device: "jcy-spine-02.infra.ntc.com"
+          name: "Ethernet1/2"
+          mac_address: "4444.a801.0001"
+        - device: "jcy-spine-02.infra.ntc.com"
+          name: "Ethernet1/3"
+          mac_address: "4444.a802.1100"
+        - device: "jcy-spine-02.infra.ntc.com"
+          name: "Ethernet1/4"
+          mac_address: "4444.a803.1010"
+        - device: "jcy-spine-02.infra.ntc.com"
+          name: "Ethernet1/5"
+          mac_address: "4444.a804.1110"

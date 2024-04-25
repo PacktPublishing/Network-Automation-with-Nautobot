@@ -1,0 +1,11 @@
+---
+plugin: networktocode.nautobot.inventory
+api_endpoint: https://demo.nautobot.com
+validate_certs: True
+config_context: False
+group_by:
+  - device_roles
+  - locations
+  - platforms
+device_query_filters:
+  - has_primary_ip: 'true'

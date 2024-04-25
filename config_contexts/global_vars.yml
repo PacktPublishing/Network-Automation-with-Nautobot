@@ -1,0 +1,11 @@
+---
+_metadata:
+    name: "Global Config Data"
+    description: "Global Config Data"
+    is_active: True
+aaa-new-model: false
+cdp: true
+lldp: true
+copp-profile: "strict"
+ansible_connection: "network_cli"
+design_revision: "v1.0"

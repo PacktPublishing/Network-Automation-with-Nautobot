@@ -1,0 +1,253 @@
+---
+- name: "SET UP NAUTOBOT WITH DEVICE META DATA"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    nautobot_url: "{{ lookup('env', 'NAUTOBOT_URL') }}"
+    nautobot_token: "{{ lookup('env', 'NAUTOBOT_TOKEN') }}"
+
+  tasks:
+
+    - name: "ADD MANUFACTURERS"
+      networktocode.nautobot.manufacturer:
+        url: "{{ nautobot_url }}"
+        token: "{{ nautobot_token }}"
+        name: "{{ manufacturer['name'] }}"
+        description: "All {{ manufacturer['name'] }} devices"
+        state: present
+      loop_control:
+        loop_var: manufacturer
+      loop:
+        - name: "Cisco"
+        - name: "Arista"
+        - name: "Juniper"
+
+    - name: "ADD PLATFORMS"
+      networktocode.nautobot.platform:
+        url: "{{ nautobot_url }}"
+        token: "{{ nautobot_token }}"
+        name: "{{ platform['name'] }}"
+        manufacturer: "{{ platform['manufacturer'] }}"
+        napalm_driver: "{{ platform['napalm_driver'] }}"
+        state: present
+      loop_control:
+        loop_var: platform
+      loop:
+        - name: "Cisco IOS-XE"
+          manufacturer: "Cisco"
+          napalm_driver: "ios"
+        - name: "Juniper Junos"
+          manufacturer: "Juniper"
+          napalm_driver: "junos"
+        - name: "Arista EOS"
+          manufacturer: "Arista"
+          napalm_driver: "eos"
+        - name: "Nexus NX-OS"
+          manufacturer: "Cisco"
+          napalm_driver: "nxos"
+
+    - name: "ADD DEVICE ROLES"
+      networktocode.nautobot.role:
+        url: "{{ nautobot_url }}"
+        token: "{{ nautobot_token }}"
+        name: "{{ role['name'] }}"
+        content_types: "{{ role['content_types'] }}"
+        color: "{{ role['color'] }}"
+        state: present
+      loop_control:
+        loop_var: role
+      loop:
+        - name: "spine"
+          content_types:
+            - "dcim.device"
+          color: "ffc107"
+        - name: "leaf"
+          content_types:
+            - "dcim.device"
+          color: "ff5722"
+        - name: "router"
+          content_types:
+            - "dcim.device"
+          color: "ffe4e1"
+        - name: "backbone"
+          content_types:
+            - "dcim.device"
+          color: "3f51b5"
+
+    - name: "ADD DEVICE DEVICE TYPES"
+      networktocode.nautobot.device_type:
+        url: "{{ nautobot_url }}"
+        token: "{{ nautobot_token }}"
+        manufacturer: "{{ dt['manufacturer'] }}"
+        model: "{{ dt['model'] }}"
+        part_number: "{{ dt['part_number'] }}"
+        u_height: "{{ dt['u_height'] }}"
+        state: present
+      loop_control:
+        loop_var: dt
+      loop:
+        - manufacturer: "Cisco"
+          model: "CSR1000V"
+          part_number: "CSR1000V"
+          u_height: "1"
+        - manufacturer: "Cisco"
+          model: "Nexus 9kv"
+          part_number: "Nexus 9kv"
+          u_height: "1"
+        - manufacturer: "Arista"
+          model: "vEOS"
+          part_number: "vEOS"
+          u_height: "1"
+        - manufacturer: "Juniper"
+          model: "vMX"
+          part_number: "vMX"
+          u_height: "1"
+
+    - name: "ADD DEVICE INTERFACES FOR IOS"
+      networktocode.nautobot.device_interface_template:
+        url: "{{ nautobot_url }}"
+        token: "{{ nautobot_token }}"
+        device_type: "{{ intf_template['device_type'] }}"
+        name: "{{ intf_template['name'] }}"
+        type: "{{ intf_template['type'] }}"
+        state: present
+      loop_control:
+        loop_var: intf_template
+      loop:
+        - device_type: "CSR1000V"
+          name: "GigabitEthernet1"
+          type: "1000Base-T"
+        - device_type: "CSR1000V"
+          name: "GigabitEthernet2"
+          type: "1000Base-T"
+        - device_type: "CSR1000V"
+          name: "GigabitEthernet3"
+          type: "1000Base-T"
+        - device_type: "CSR1000V"
+          name: "GigabitEthernet4"
+          type: "1000Base-T"
+        - device_type: "CSR1000V"
+          name: "GigabitEthernet5"
+          type: "1000Base-T"
+        - device_type: "CSR1000V"
+          name: "GigabitEthernet6"
+          type: "1000Base-T"
+        - device_type: "CSR1000V"
+          name: "GigabitEthernet7"
+          type: "1000Base-T"
+        - device_type: "CSR1000V"
+          name: "GigabitEthernet8"
+          type: "1000Base-T"
+        - device_type: "CSR1000V"
+          name: "Loopback0"
+          type: "Virtual"
+
+    - name: "ADD DEVICE INTERFACES FOR NXOS"
+      networktocode.nautobot.device_interface_template:
+        url: "{{ nautobot_url }}"
+        token: "{{ nautobot_token }}"
+        device_type: "{{ intf_template['device_type'] }}"
+        name: "{{ intf_template['name'] }}"
+        type: "{{ intf_template['type'] }}"
+        state: present
+      loop_control:
+        loop_var: intf_template
+      loop:
+        - device_type: "Nexus 9kv"
+          name: "Ethernet1/1"
+          type: "1000Base-T"
+        - device_type: "Nexus 9kv"
+          name: "Ethernet1/2"
+          type: "1000Base-T"
+        - device_type: "Nexus 9kv"
+          name: "Ethernet1/3"
+          type: "1000Base-T"
+        - device_type: "Nexus 9kv"
+          name: "Ethernet1/4"
+          type: "1000Base-T"
+        - device_type: "Nexus 9kv"
+          name: "Ethernet1/5"
+          type: "1000Base-T"
+        - device_type: "Nexus 9kv"
+          name: "mgmt0"
+          type: "Virtual"
+        - device_type: "Nexus 9kv"
+          name: "loopback0"
+          type: "Virtual"
+
+    - name: "ADD DEVICE INTERFACES FOR JUNOS"
+      networktocode.nautobot.device_interface_template:
+        url: "{{ nautobot_url }}"
+        token: "{{ nautobot_token }}"
+        device_type: "{{ intf_template['device_type'] }}"
+        name: "{{ intf_template['name'] }}"
+        type: "{{ intf_template['type'] }}"
+        state: present
+      loop_control:
+        loop_var: intf_template
+      loop:
+        - device_type: "vMX"
+          name: "ge-0/0/0"
+          type: "1000Base-T"
+        - device_type: "vMX"
+          name: "ge-0/0/1"
+          type: "1000Base-T"
+        - device_type: "vMX"
+          name: "ge-0/0/2"
+          type: "1000Base-T"
+        - device_type: "vMX"
+          name: "ge-0/0/3"
+          type: "1000Base-T"
+        - device_type: "vMX"
+          name: "ge-0/0/4"
+          type: "1000Base-T"
+        - device_type: "vMX"
+          name: "ge-0/0/5"
+          type: "1000Base-T"
+        - device_type: "vMX"
+          name: "ge-0/0/6"
+          type: "1000Base-T"
+        - device_type: "vMX"
+          name: "fxp0"
+          type: "Virtual"
+        - device_type: "vMX"
+          name: "lo0"
+          type: "Virtual"
+
+    - name: "ADD DEVICE INTERFACES FOR EOS"
+      networktocode.nautobot.device_interface_template:
+        url: "{{ nautobot_url }}"
+        token: "{{ nautobot_token }}"
+        device_type: "{{ intf_template['device_type'] }}"
+        name: "{{ intf_template['name'] }}"
+        type: "{{ intf_template['type'] }}"
+        state: present
+      loop_control:
+        loop_var: intf_template
+      loop:
+        - device_type: "vEOS"
+          name: "Ethernet1"
+          type: "1000Base-T"
+        - device_type: "vEOS"
+          name: "Ethernet2"
+          type: "1000Base-T"
+        - device_type: "vEOS"
+          name: "Ethernet3"
+          type: "1000Base-T"
+        - device_type: "vEOS"
+          name: "Ethernet4"
+          type: "1000Base-T"
+        - device_type: "vEOS"
+          name: "Ethernet5"
+          type: "1000Base-T"
+        - device_type: "vEOS"
+          name: "Ethernet6"
+          type: "1000Base-T"
+        - device_type: "vEOS"
+          name: "Loopback0"
+          type: "Virtual"
+        - device_type: "vEOS"
+          name: "Management1"
+          type: "Virtual"

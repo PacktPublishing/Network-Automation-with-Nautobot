@@ -1,0 +1,35 @@
+# inventory-gql.yml
+---
+plugin: networktocode.nautobot.gql_inventory
+query:
+  devices:
+    id:
+    name:
+    location:
+      name:
+    tenant:
+      name:
+    platform:
+      name:
+      manufacturer:
+        name:
+      napalm_driver:
+    device_type:
+      model:
+    role:
+      name:
+    status:
+      name:
+    config_context:
+    interfaces:
+      name:
+      ip_addresses:
+        address:
+      mac_address:
+group_by:
+  - platform.name
+  - device_type.model
+  - role.name
+  - location.name
+  - status.name
+  - platform.napalm_driver

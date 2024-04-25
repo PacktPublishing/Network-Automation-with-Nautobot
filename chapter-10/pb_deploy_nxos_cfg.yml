@@ -1,0 +1,25 @@
+---
+
+- name: "DEPLOY DEVICE CONFIGURATIONS"
+  hosts: "nxos"
+  gather_facts: false
+  connection: "ansible.netcommon.network_cli"
+
+  vars:
+    ansible_ssh_password: "{{ lookup('env', 'NTC_NET_PASSWORD') }}"
+
+  tasks:
+
+    - name: "BUILD CONFIGS DIRECTORY"
+      ansible.builtin.file:
+        path: "configs/{{ location['name'] }}/"
+        state: "directory"
+
+    - name: "GENERATE BGP CONFIGS"
+      ansible.builtin.template:
+        src: "nxos_config.j2"
+        dest: "configs/{{ location['name'] }}/{{ ansible_host }}.cfg"
+
+    - name: "ENSURE INTERFACES ARE L3"
+      cisco.nxos.nxos_config:
+        src: "configs/{{ location['name'] }}/{{ ansible_host }}.cfg"

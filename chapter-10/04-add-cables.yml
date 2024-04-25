@@ -1,0 +1,56 @@
+---
+- name: "ADD CABLES"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    nautobot_url: "{{ lookup('env', 'NAUTOBOT_URL') }}"
+    nautobot_token: "{{ lookup('env', 'NAUTOBOT_TOKEN') }}"
+
+  tasks:
+
+    - name: "ADD CABLES"
+      networktocode.nautobot.cable:
+        url: "{{ nautobot_url }}"
+        token: "{{ nautobot_token }}"
+        termination_a_type: dcim.interface
+        termination_a:
+          device: "{{ cable['a_device'] }}"
+          name: "{{ cable['a_interface'] }}"
+        termination_b_type: dcim.interface
+        termination_b:
+          device: "{{ cable['b_device'] }}"
+          name: "{{ cable['b_interface'] }}"
+        status: "Connected"
+        state: present
+      loop_control:
+        loop_var: cable
+      loop:
+        - {"a_device": "jcy-bb-01.infra.ntc.com", "a_interface": "GigabitEthernet4", "b_device": "nyc-bb-01.infra.ntc.com", "b_interface": "ge-0/0/3"}
+
+        - {"a_device": "jcy-rtr-02.infra.ntc.com", "a_interface": "GigabitEthernet3", "b_device": "jcy-bb-01.infra.ntc.com", "b_interface": "GigabitEthernet3"}
+
+        - {"a_device": "jcy-rtr-01.infra.ntc.com", "a_interface": "GigabitEthernet2", "b_device": "jcy-bb-01.infra.ntc.com", "b_interface": "GigabitEthernet2"}
+        - {"a_device": "jcy-rtr-01.infra.ntc.com", "a_interface": "GigabitEthernet4", "b_device": "jcy-rtr-02.infra.ntc.com", "b_interface": "GigabitEthernet4"}
+
+        - {"a_device": "jcy-spine-02.infra.ntc.com", "a_interface": "Ethernet1/5", "b_device": "jcy-rtr-02.infra.ntc.com", "b_interface": "GigabitEthernet5"}
+
+        - {"a_device": "jcy-spine-01.infra.ntc.com", "a_interface": "Ethernet1/1", "b_device": "jcy-spine-02.infra.ntc.com", "b_interface": "Ethernet1/1"}
+        - {"a_device": "jcy-spine-01.infra.ntc.com", "a_interface": "Ethernet1/2", "b_device": "jcy-spine-02.infra.ntc.com", "b_interface": "Ethernet1/2"}
+        - {"a_device": "jcy-spine-01.infra.ntc.com", "a_interface": "Ethernet1/3", "b_device": "jcy-spine-02.infra.ntc.com", "b_interface": "Ethernet1/3"}
+        - {"a_device": "jcy-spine-01.infra.ntc.com", "a_interface": "Ethernet1/4", "b_device": "jcy-spine-02.infra.ntc.com", "b_interface": "Ethernet1/4"}
+        - {"a_device": "jcy-spine-01.infra.ntc.com", "a_interface": "Ethernet1/5", "b_device": "jcy-rtr-01.infra.ntc.com", "b_interface": "GigabitEthernet5"}
+
+        - {"a_device": "nyc-spine-01.infra.ntc.com", "a_interface": "Ethernet1", "b_device": "nyc-rtr-01.infra.ntc.com", "b_interface": "ge-0/0/3"}
+        - {"a_device": "nyc-spine-01.infra.ntc.com", "a_interface": "Ethernet2", "b_device": "nyc-leaf-01.infra.ntc.com", "b_interface": "Ethernet2"}
+        - {"a_device": "nyc-spine-01.infra.ntc.com", "a_interface": "Ethernet3", "b_device": "nyc-leaf-02.infra.ntc.com", "b_interface": "Ethernet2"}
+
+        - {"a_device": "nyc-spine-02.infra.ntc.com", "a_interface": "Ethernet1", "b_device": "nyc-rtr-02.infra.ntc.com", "b_interface": "ge-0/0/3"}
+        - {"a_device": "nyc-spine-02.infra.ntc.com", "a_interface": "Ethernet2", "b_device": "nyc-leaf-01.infra.ntc.com", "b_interface": "Ethernet3"}
+        - {"a_device": "nyc-spine-02.infra.ntc.com", "a_interface": "Ethernet3", "b_device": "nyc-leaf-02.infra.ntc.com", "b_interface": "Ethernet3"}
+
+        - {"a_device": "nyc-rtr-01.infra.ntc.com", "a_interface": "ge-0/0/0", "b_device": "nyc-bb-01.infra.ntc.com", "b_interface": "ge-0/0/0"}
+        - {"a_device": "nyc-rtr-01.infra.ntc.com", "a_interface": "ge-0/0/1", "b_device": "nyc-rtr-02.infra.ntc.com", "b_interface": "ge-0/0/1"}
+
+        - {"a_device": "nyc-rtr-02.infra.ntc.com", "a_interface": "ge-0/0/2", "b_device": "nyc-bb-01.infra.ntc.com", "b_interface": "ge-0/0/2"}

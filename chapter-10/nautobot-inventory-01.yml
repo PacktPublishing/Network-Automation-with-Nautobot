@@ -1,0 +1,6 @@
+# inventory-gql.yml
+---
+plugin: networktocode.nautobot.gql_inventory
+query:
+  devices:
+    name:
