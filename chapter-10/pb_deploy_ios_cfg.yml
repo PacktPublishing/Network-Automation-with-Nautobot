@@ -1,0 +1,25 @@
+---
+
+- name: "DEPLOY DEVICE CONFIGURATIONS"
+  hosts: "ios"
+  gather_facts: false
+  connection: "ansible.netcommon.network_cli"
+
+  vars:
+    ansible_password: "{{ lookup('env', 'NTC_NET_PASSWORD') }}"
+
+  tasks:
+
+    - name: "CONFIGURE L3 INTERFACES"
+      cisco.ios.ios_l3_interfaces:
+        config:
+          - name: "{{ item['name'] }}"
+            ipv4:
+              - address: "{{ item['ip_addresses'][0]['address'] }}"
+        state: replaced
+      loop: "{{ interfaces | rejectattr('name', 'equalto', 'GigabitEthernet1') | selectattr('ip_addresses', 'ne', []) | list }}"
+
+    - name: "DEPLOY BGP CONFIGURATION"
+      cisco.ios.ios_bgp_global:
+        config: "{{ config_context['bgp_config'] }}"
+        state: replaced

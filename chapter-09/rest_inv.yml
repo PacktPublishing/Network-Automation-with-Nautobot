@@ -1,0 +1,13 @@
+---
+# REST Inventory ch09-ansible/rest_inv.yml
+plugin: networktocode.nautobot.inventory
+api_endpoint: https://demo.nautobot.com
+validate_certs: True
+config_context: false
+device_query_filters:
+  - has_primary_ip: "true"
+  - location: "ORD01"
+  - role: "edge"
+group_names_raw: yes
+group_by:
+  - platforms

@@ -1,0 +1,48 @@
++logging userinfo
++ip domain name infra.ntc.com
+crypto pki certificate chain TP-self-signed-1088426642
+ certificate self-signed 01
+  +9F236888 D63E76AC C563D8B5 ECEF4D44 04DBC8B8
+        +quit
+crypto pki certificate chain SLA-TrustPoint
+ certificate ca 01
+  +D697DF7F 28
+        +quit
++interface Loopback0
+ +ip address 10.0.10.1 255.255.255.255
+interface GigabitEthernet2
+ +ip address 10.10.0.5 255.255.255.252
+interface GigabitEthernet4
+ +ip address 10.10.0.9 255.255.255.252
+interface GigabitEthernet5
+ +ip address 10.10.11.5 255.255.255.252
++router bgp 65251
+ +bgp router-id 10.0.10.1
+ +bgp log-neighbor-changes
+ +redistribute connected
+ +neighbor 10.10.0.6 remote-as 65251
+ +neighbor 10.10.0.10 remote-as 65251
+ +neighbor 10.10.11.6 remote-as 65250
++ip route 0.0.0.0 0.0.0.0 10.0.0.2
++snmp-server community networktocode RO
++snmp-server community secure RW
++snmp-server location Network to Code - NYC | NY
++snmp-server contact John Smith
++snmp-server host 10.1.1.1 version 2c networktocode
++ntp server 10.1.1.1
++ntp server 10.2.2.2 prefer
+-ip domain name ntc.com
+crypto pki certificate chain TP-self-signed-1088426642
+ certificate self-signed 01
+  -	quit
+crypto pki certificate chain SLA-TrustPoint
+ certificate ca 01
+  -	quit
+interface GigabitEthernet2
+ -no ip address
+interface GigabitEthernet4
+ -no ip address
+interface GigabitEthernet5
+ -no ip address
+-snmp-server community ntc-public RO
+-snmp-server community ntc-private RW

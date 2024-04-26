@@ -1,0 +1,13 @@
+# pb-test-inventory-2.yml
+---
+
+- name: "BASIC PLAY TESTING DYNAMIC INVENTORY"
+  hosts: "platforms_arista_eos"
+  gather_facts: false
+  connection: "local"
+
+  tasks:
+
+    - name: "PRINT ALL GROUPS"
+      debug:
+        var: inventory_hostname

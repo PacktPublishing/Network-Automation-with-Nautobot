@@ -1,0 +1,12 @@
+---
+
+- name: "BASIC PLAY TESTING DYNAMIC INVENTORY"
+  hosts: "all"
+  gather_facts: false
+  connection: "local"
+
+  tasks:
+
+    - name: "PRINT ALL GROUPS"
+      debug:
+        var: groups

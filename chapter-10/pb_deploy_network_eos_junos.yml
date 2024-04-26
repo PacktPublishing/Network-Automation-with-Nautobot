@@ -1,0 +1,32 @@
+---
+
+- name: "DEPLOY EOS & JUNOS CONFIGURATIONS"
+  hosts: "eos,junos"
+  gather_facts: false
+  connection: "local"
+
+  vars:
+    project_path: "{{ playbook_dir }}"
+    backups_dir: "{{ project_path }}/network_backups"
+    diffs_dir: "{{ project_path }}/diffs"
+    config_path: "{{ project_path }}/baseline/{{ location['name'] }}"
+
+  tasks:
+
+    - name: "BUILD DIFFS DIRECTORY"
+      ansible.builtin.file:
+        path: "{{ diffs_dir }}/"
+        state: "directory"
+      run_once: true
+
+    - name: "DEPLOY AND REPLACE JUNOS-EOS CONFIGURATIONS"
+      napalm_install_config:
+        provider:
+          username: "{{ lookup('env', 'NTC_NET_USERNAME') }}"
+          password: "{{ lookup('env', 'NTC_NET_PASSWORD') }}"
+          host: "{{ ansible_host }}"
+        config_file: "{{ config_path }}/{{ ansible_host }}.cfg"
+        diff_file: "{{ project_path }}/diffs/{{ ansible_host }}.diffs"
+        replace_config: true
+        commit_changes: true
+        dev_os: "{{ platform['napalm_driver'] }}"

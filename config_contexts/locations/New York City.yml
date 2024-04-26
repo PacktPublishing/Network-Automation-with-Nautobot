@@ -1,0 +1,57 @@
+---
+_metadata:
+  name: "New York City Config Data"
+  description: "Data used to generate configs for Jersey City devices."
+  is_active: True
+  weight: 1100
+snmp:
+  location: "Network to Code - NYC | NY"
+  contact: "John Smith"
+  communities:
+    - cstring: "networktocode"
+      mode: "RO"
+      group: "network-operator"
+    - cstring: "secure"
+      mode: "RW"
+      group: "network-admin"
+  hosts:
+    - address: "10.1.1.1"
+      snmp_version: "2c"
+      cstring: "networktocode"
+      traps: true
+  users:
+    - name: ntc
+      role: network-admin
+      auth: md5
+      auth_key: "0xa6a90268fa0765e55bdbdfd9c3256a3b"
+      priv_key: "0xa6a90268fa0765e55bdbdfd9c3256a3b"
+    - name: admin
+      role: ""
+      auth: md5
+      auth_key: "0x3c0c5d5139941831378b36418799e1cc"
+      priv_key: "0x3c0c5d5139941831378b36418799e1cc"
+      engine_id: "128:0:0:9:3:82:208:168:0:27:1"
+
+logging:
+  origin_id: "hostname"
+  hosts:
+    - address: "10.125.1.171"
+      transport: "udp"
+      port: "7002"
+
+routing:
+  static:
+    - network: "0.0.0.0"
+      mask: "0.0.0.0"
+      next_hop: "10.0.0.2"
+
+dns:
+  domain_name: "ntc.com"
+
+ntp_servers:
+  - address: 10.1.1.1
+    priority: false
+    vrf: default
+  - address: 10.2.2.2
+    priority: true
+    vrf: default

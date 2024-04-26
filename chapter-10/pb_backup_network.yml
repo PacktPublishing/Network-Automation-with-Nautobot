@@ -1,0 +1,27 @@
+---
+
+- name: "BACKUP DEVICE CONFIGURATIONS"
+  hosts: "all"
+  gather_facts: false
+  connection: "ansible.netcommon.network_cli"
+
+  vars:
+    project_path: "{{ playbook_dir }}"
+    backups_dir: "{{ project_path }}/network_backups"
+    ansible_user: "{{ lookup('env', 'NTC_NET_USERNAME') }}"
+    ansible_password: "{{ lookup('env', 'NTC_NET_PASSWORD') }}"
+
+  tasks:
+
+    - name: "BUILD DIRECTORIES"
+      ansible.builtin.file:
+        path: "{{ backups_dir }}/"
+        state: "directory"
+      run_once: true
+
+    - name: "BACKUP ALL CONFIGURATIONS"
+      ansible.netcommon.cli_config:
+        backup: "yes"
+        backup_options:
+          filename: "{{ ansible_host }}.cfg"
+          dir_path: "{{ backups_dir }}/"

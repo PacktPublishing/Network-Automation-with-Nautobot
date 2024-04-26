@@ -1,0 +1,21 @@
+---
+virtual_routing_instances:
+  - name: "Orange"
+    route_distinguisher: "61100:10"
+    comments: "VPN Orange"
+  - name: "Blue"
+    route_distinguisher: "61100:20"
+    comments: "VPN Blue"
+  - name: "Green"
+    route_distinguisher: "61100:30"
+    comments: "VPN Green"
+
+prefixes:
+  - prefix: "192.0.2.0/25"
+    virtual_routing_instance: "Orange"
+  - prefix: "192.0.2.128/25"
+    virtual_routing_instance: "Orange"
+  - prefix: "198.51.100.0/24"
+    virtual_routing_instance: "Blue"
+  - prefix: "203.0.113.0/24"
+    virtual_routing_instance: "Green"

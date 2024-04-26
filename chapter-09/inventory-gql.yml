@@ -1,0 +1,28 @@
+# inventory-gql.yml
+---
+plugin: networktocode.nautobot.gql_inventory
+api_endpoint: https://demo.nautobot.com
+query:
+  devices:
+    filters:
+      location: AMS01
+    id:
+    name:
+    location:
+      name:
+    tenant:
+      name:
+    platform:
+      name:
+      manufacturer:
+        name:
+    device_type:
+      model:
+    role:
+      name:
+group_by:
+  - tenant.name
+  - platform.name
+  - device_type.model
+  - role.name
+  - location.name
